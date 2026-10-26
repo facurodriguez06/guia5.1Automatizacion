@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="theme-color" content="#090D16">
+    <meta name="description" content="GamiStudy - Plataforma interactiva para el aprendizaje de robotica, microcontroladores ATmega328P y programacion en Arduino.">
+    <title>GamiStudy - Guia 5.1: Robotica y Programacion en Arduino</title>
+
+    <!-- Favicons de Arduino y Robotica -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+    <style>
+        /* =========================================
+           VARIABLES CSS & PALETA "MICROCONTROLLER LAB"
+           ========================================= */
+        :root {
+            --bg-primary: #090D16;
+            /* Fondo Chasis Oscuro */
+            --bg-secondary: #111827;
+            /* Contenedores PCB Dark */
+            --bg-tertiary: #1F2937;
+            /* Superficies interactivas en reposo */
+            --text-main: #F3F4F6;
+            /* Blanco Tecnico */
+            --text-muted: #9CA3AF;
+            /* Gris Metalico */
+            --accent-success: #10B981;
+            /* Verde Soldadura / HIGH */
+            --accent-alert: #EF4444;
+            /* Rojo Cortocircuito / Alerta */
+            --accent-warning: #F59E0B;
+            /* Ambar Senal PWM */
+            --accent-interactive: #00979D;
+            /* Cian Oficial Arduino */
+
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-tech: 'Fira Code', 'Consolas', 'Courier New', monospace;
+            --transition-smooth: 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+            touch-action: manipulation;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* =========================================
+           HEADER Y NAVEGACION SUPERIOR
+           ========================================= */
+        header {
+            padding: 1.2rem 1.5rem;
+            background-color: var(--bg-secondary);
+            border-bottom: 2px solid var(--accent-interactive);
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 151, 157, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1100px;
+            margin: 0 auto 0.85rem auto;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        header h1 {
+            font-size: clamp(1.1rem, 3.2vw, 1.45rem);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 700;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        header span.tech {
+            color: var(--accent-interactive);
+            font-family: var(--font-tech);
+        }
+
+        .sys-badge {
+            font-family: var(--font-tech);
+            font-size: clamp(0.68rem, 1.8vw, 0.75rem);
+            background: rgba(0, 151, 157, 0.15);
+            color: var(--accent-interactive);
+            padding: 0.3rem 0.7rem;
+            border: 1px solid var(--accent-interactive);
+            border-radius: 4px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 0.55rem;
+            flex-wrap: wrap;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .nav-btn {
+            background-color: var(--bg-tertiary);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 0.55rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-tech);
+            font-weight: 600;
+            font-size: clamp(0.78rem, 2vw, 0.82rem);
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            user-select: none;
+            text-align: center;
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active {
+            background-color: var(--accent-interactive);
+            color: #FFFFFF;
+            border-color: var(--accent-interactive);
+            box-shadow: 0 0 12px rgba(0, 151, 157, 0.45);
+            transform: translateY(-1px);
+        }
+
+        /* =========================================
+           CONTENEDOR PRINCIPAL
+           ========================================= */
+        main {
+            flex-grow: 1;
+            padding: 1.75rem 1rem max(2rem, env(safe-area-inset-bottom)) 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .schematic-banner {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 151, 157, 0.35);
+            border-radius: 10px;
+            padding: clamp(0.85rem, 2.5vw, 1.1rem);
+            margin-bottom: 1.8rem;
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6);
+            overflow-x: auto;
+        }
+
+        .schematic-title {
+            font-family: var(--font-tech);
+            font-size: clamp(0.72rem, 2vw, 0.8rem);
+            color: var(--accent-warning);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.6rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .schematic-svg {
+            width: 100%;
+            height: auto;
+            max-height: 190px;
+            display: block;
+        }
+
+        .module-section {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .module-section.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .instructions {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: clamp(0.85rem, 2vw, 0.96rem);
+            font-family: var(--font-tech);
+            color: var(--accent-interactive);
+            max-width: 850px;
+            padding: 0 0.5rem;
+            word-break: break-word;
+        }
+
+        /* =========================================
+           MODULO 1: FLASHCARDS
+           ========================================= */
+        .scene {
+            width: 100%;
+            max-width: 760px;
+            height: clamp(340px, 48vh, 440px);
+            perspective: 1200px;
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform var(--transition-smooth);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(1.2rem, 3.5vw, 2.2rem);
+            border-radius: 12px;
+            background-color: var(--bg-secondary);
+            border: 1px solid rgba(0, 151, 157, 0.35);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .card-front h2 {
+            font-size: clamp(1.05rem, 3vw, 1.25rem);
+            color: var(--text-main);
+            font-weight: 600;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .card-front .tag-badge {
+            margin-top: 1.2rem;
+            font-size: clamp(0.72rem, 1.8vw, 0.78rem);
+            font-family: var(--font-tech);
+            color: var(--accent-interactive);
+            border: 1px solid rgba(0, 151, 157, 0.4);
+            padding: 0.25rem 0.7rem;
+            border-radius: 4px;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            gap: 1rem;
+        }
+
+        .card-back p {
+            font-size: clamp(0.88rem, 2.2vw, 0.98rem);
+            font-family: var(--font-tech);
+            color: #A7F3D0;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .card-back .citation {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.8rem;
+            font-family: var(--font-body);
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.8rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            width: 100%;
+            max-width: 760px;
+            justify-content: center;
+        }
+
+        .controls.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .btn-action {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: var(--font-tech);
+            font-size: clamp(0.82rem, 2vw, 0.9rem);
+            transition: transform 0.2s, background-color 0.2s;
+            flex: 1;
+            max-width: 300px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.02);
+        }
+
+        .btn-easy {
+            background-color: var(--accent-success);
+            color: #090D16;
+        }
+
+        .btn-hard {
+            background-color: var(--accent-alert);
+            color: #FFFFFF;
+        }
+
+        /* =========================================
+           MODULO 2: QUIZ
+           ========================================= */
+        #quiz-container {
+            width: 100%;
+            max-width: 820px;
+            background: var(--bg-secondary);
+            padding: clamp(1.2rem, 3vw, 2rem);
+            border-radius: 12px;
+            border-top: 4px solid var(--accent-interactive);
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 8px;
+            background: #000000;
+            border-radius: 4px;
+            margin-bottom: 1.6rem;
+            overflow: hidden;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: var(--accent-interactive);
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        .timer-fill.danger {
+            background: var(--accent-alert);
+        }
+
+        .question-text {
+            font-size: clamp(1.05rem, 2.5vw, 1.15rem);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.85rem;
+        }
+
+        .option-btn {
+            background: var(--bg-primary);
+            border: 2px solid var(--bg-tertiary);
+            color: var(--text-main);
+            padding: clamp(0.85rem, 2vw, 1rem);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: clamp(0.88rem, 2vw, 0.96rem);
+            transition: all 0.2s ease;
+            font-family: var(--font-body);
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            word-break: break-word;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent-interactive);
+            background: rgba(0, 151, 157, 0.1);
+        }
+
+        .option-btn.correct {
+            background: var(--accent-success);
+            color: #090D16;
+            border-color: var(--accent-success);
+            font-weight: 600;
+        }
+
+        .option-btn.wrong {
+            background: var(--accent-alert);
+            color: #FFFFFF;
+            border-color: var(--accent-alert);
+        }
+
+        /* =========================================
+           MODULO 3: DRAG & DROP
+           ========================================= */
+        .dd-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .terms-col,
+        .defs-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            background: var(--bg-secondary);
+            padding: clamp(1rem, 2.5vw, 1.5rem);
+            border-radius: 12px;
+        }
+
+        .draggable-term {
+            background: var(--bg-tertiary);
+            padding: 0.9rem 1rem;
+            border-radius: 8px;
+            cursor: grab;
+            font-family: var(--font-tech);
+            font-weight: 600;
+            font-size: clamp(0.82rem, 2vw, 0.9rem);
+            border: 1px solid var(--accent-interactive);
+            user-select: none;
+            text-align: center;
+            color: var(--accent-interactive);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .draggable-term:active {
+            cursor: grabbing;
+        }
+
+        .draggable-term.selected {
+            outline: 2px solid var(--accent-interactive);
+            box-shadow: 0 0 14px rgba(0, 151, 157, 0.45);
+            border-color: #FFFFFF;
+            transform: scale(1.02);
+            background: rgba(0, 151, 157, 0.18);
+        }
+
+        .drop-zone {
+            background: var(--bg-primary);
+            border: 2px dashed var(--bg-tertiary);
+            padding: 0.9rem;
+            min-height: 85px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .drop-zone.drag-over {
+            border-color: var(--accent-interactive);
+            background: rgba(0, 151, 157, 0.08);
+        }
+
+        .drop-zone.matched {
+            border-color: var(--accent-success);
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--text-main);
+        }
+
+        /* =========================================
+           MODULO 4: COMPLETAR TEXTOS
+           ========================================= */
+        .fill-container {
+            width: 100%;
+            max-width: 820px;
+            background: var(--bg-secondary);
+            padding: clamp(1.2rem, 3vw, 2rem);
+            border-radius: 12px;
+            font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+            line-height: 2.1;
+            border-left: 4px solid var(--accent-warning);
+        }
+
+        .blank-input {
+            background: var(--bg-primary);
+            border: none;
+            border-bottom: 2px solid var(--accent-interactive);
+            color: var(--accent-warning);
+            font-family: var(--font-tech);
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            padding: 0.25rem 0.5rem;
+            width: min(100%, 180px);
+            max-width: 220px;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .blank-input:focus {
+            border-bottom-color: var(--accent-success);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .blank-input.correct {
+            border-bottom-color: var(--accent-success);
+            color: var(--accent-success);
+            pointer-events: none;
+        }
+
+        .blank-input.wrong {
+            border-bottom-color: var(--accent-alert);
+            color: var(--accent-alert);
+            animation: shake 0.4s;
+        }
+
+        .check-btn {
+            margin-top: 1.8rem;
+            padding: 0.95rem 1.5rem;
+            font-size: clamp(0.88rem, 2vw, 0.98rem);
+            font-family: var(--font-tech);
+            background: var(--accent-interactive);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: block;
+            width: 100%;
+            min-height: 44px;
+        }
+
+        .check-btn:hover {
+            background: var(--accent-success);
+            color: #090D16;
+            transform: translateY(-2px);
+        }
+
+        /* =========================================
+           MODULO 5: CLASIFICADOR (PULL-UP VS PULL-DOWN)
+           ========================================= */
+        .sorter-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1000px;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .item-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+            padding: clamp(1rem, 2.5vw, 1.4rem);
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            width: 100%;
+            min-height: 120px;
+            border: 2px dashed var(--bg-tertiary);
+        }
+
+        .sorter-bins {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .bin {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: clamp(1rem, 2.5vw, 1.5rem);
+            text-align: center;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .bin-pullup {
+            border-color: var(--accent-interactive);
+        }
+
+        .bin-pulldown {
+            border-color: var(--accent-warning);
+        }
+
+        .bin h3 {
+            margin-bottom: 0.4rem;
+            padding-bottom: 0.4rem;
+            font-family: var(--font-tech);
+            font-size: clamp(0.92rem, 2vw, 1.02rem);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .bin-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+
+        .bin-items {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: 0.6rem;
+        }
+
+        .sorter-item {
+            background: var(--bg-tertiary);
+            padding: 0.85rem 1rem;
+            border-radius: 6px;
+            cursor: grab;
+            font-weight: 500;
+            font-size: clamp(0.85rem, 2vw, 0.92rem);
+            border-left: 3px solid var(--accent-interactive);
+            text-align: left;
+            font-family: var(--font-body);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            user-select: none;
+        }
+
+        .sorter-item:active {
+            cursor: grabbing;
+        }
+
+        .sorter-item.selected {
+            outline: 2px solid var(--accent-interactive);
+            box-shadow: 0 0 14px rgba(0, 151, 157, 0.45);
+            background: rgba(0, 151, 157, 0.15);
+            transform: scale(1.02);
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .completion-msg {
+            text-align: center;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-family: var(--font-tech);
+            color: var(--accent-success);
+            margin-top: 1.8rem;
+            padding: 1rem;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* RESPONSIVIDAD Y BREAKPOINTS */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+
+            .header-top {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .dd-container {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .sorter-bins {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-action {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .bin {
+                min-height: 240px;
+            }
+        }
+
+        @media (max-width: 540px) {
+            nav {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.45rem;
+                width: 100%;
+            }
+
+            .nav-btn {
+                width: 100%;
+                padding: 0.6rem 0.4rem;
+                font-size: 0.75rem;
+                min-height: 44px;
+            }
+
+            .nav-btn:last-child {
+                grid-column: span 2;
+            }
+
+            .fill-container {
+                line-height: 2.3;
+                padding: 1.1rem;
+            }
+
+            .blank-input {
+                width: 130px;
+                font-size: 0.9rem;
+            }
+
+            .scene {
+                height: clamp(340px, 55vh, 420px);
+            }
+
+            .card-face {
+                padding: 1.2rem;
+            }
+
+            .schematic-title {
+                flex-direction: column;
+                gap: 0.2rem;
+                font-size: 0.72rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <header>
+        <div class="header-top">
+            <h1>Guía 5.1 // <span class="tech">Robótica y Programación en Arduino</span></h1>
+            <span class="sys-badge">ATmega328P // ADC 10-BIT // PWM 8-BIT</span>
+        </div>
+        <nav id="main-nav">
+            <button class="nav-btn active" data-target="module-flashcards">01. Tarjetas de Hardware</button>
+            <button class="nav-btn" data-target="module-quiz">02. Auditoria de Circuito</button>
+            <button class="nav-btn" data-target="module-dragdrop">03. Mapeo de Componentes</button>
+            <button class="nav-btn" data-target="module-fill">04. Sintaxis y Registros</button>
+            <button class="nav-btn" data-target="module-sorter">05. Pull-Up vs Pull-Down</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- MONITOR TECNICO VECTORIAL (SVG) -->
+        <div class="schematic-banner">
+            <div class="schematic-title">
+                <span>// ESQUEMA DE REFERENCIA: ARQUITECTURA DE ENTRADA/SALIDA Y REGISTROS ATMEGA328P</span>
+                <span>REF: GUIA_5.1_TINKERCAD</span>
+            </div>
+            <svg class="schematic-svg" viewBox="0 0 900 165" xmlns="http://www.w3.org/2000/svg">
+                <rect width="900" height="165" fill="#0B101B" rx="6" />
+
+                <!-- Bloque Entradas Analogicas -->
+                <rect x="15" y="20" width="200" height="125" fill="#131C2E" stroke="#00979D" stroke-width="1.5"
+                    rx="4" />
+                <text x="25" y="42" fill="#00979D" font-family="monospace" font-size="12" font-weight="bold">PUERTO C
+                    (A0 - A5)</text>
+                <text x="25" y="62" fill="#E5E7EB" font-family="monospace" font-size="11">ADC 10 bits: 0 a 1023</text>
+                <text x="25" y="82" fill="#9CA3AF" font-family="monospace" font-size="10">- Potenciometro (0-5V)</text>
+                <text x="25" y="100" fill="#9CA3AF" font-family="monospace" font-size="10">- TMP36: (V - 0.5)*100
+                    °C</text>
+                <text x="25" y="122" fill="#F59E0B" font-family="monospace" font-size="10">Reg: DDRC / PORTC /
+                    PINC</text>
+
+                <!-- Flecha 1 -->
+                <line x1="215" y1="82" x2="265" y2="82" stroke="#00979D" stroke-width="2" />
+                <polygon points="265,77 275,82 265,87" fill="#00979D" />
+                <text x="222" y="72" fill="#9CA3AF" font-family="monospace" font-size="9">map()</text>
+
+                <!-- Bloque CPU / Registros -->
+                <rect x="275" y="15" width="320" height="135" fill="#162238" stroke="#10B981" stroke-width="1.5"
+                    rx="4" />
+                <text x="290" y="38" fill="#10B981" font-family="monospace" font-size="12" font-weight="bold">NUCLEO
+                    ATMEGA328P (LOGICA Y PUERTOS)</text>
+                <text x="290" y="58" fill="#E5E7EB" font-family="monospace" font-size="11">Puerto D: Pines D0 a D7 (DDRD
+                    / PORTD)</text>
+                <text x="290" y="76" fill="#E5E7EB" font-family="monospace" font-size="11">Puerto B: Pines D8 a D13
+                    (DDRB / PORTB)</text>
+                <text x="290" y="96" fill="#F59E0B" font-family="monospace" font-size="10">DDRx: 1 = Salida (OUTPUT) | 0
+                    = Entrada (INPUT)</text>
+                <text x="290" y="114" fill="#9CA3AF" font-family="monospace" font-size="10">UART Serial: 9600 baudios
+                    (char '1' != int 1)</text>
+                <text x="290" y="132" fill="#9CA3AF" font-family="monospace" font-size="10">Teclado 4x4: Barrido 4 Filas
+                    x 4 Columnas (8 pines)</text>
+
+                <!-- Flecha 2 -->
+                <line x1="595" y1="82" x2="645" y2="82" stroke="#F59E0B" stroke-width="2" />
+                <polygon points="645,77 655,82 645,87" fill="#F59E0B" />
+                <text x="600" y="72" fill="#F59E0B" font-family="monospace" font-size="9">0-255</text>
+
+                <!-- Bloque Salidas / Actuadores -->
+                <rect x="655" y="20" width="230" height="125" fill="#131C2E" stroke="#F59E0B" stroke-width="1.5"
+                    rx="4" />
+                <text x="665" y="42" fill="#F59E0B" font-family="monospace" font-size="12" font-weight="bold">SALIDAS
+                    PWM Y PERIFERICOS</text>
+                <text x="665" y="62" fill="#E5E7EB" font-family="monospace" font-size="11">Pines PWM: 3, 5, 6, 9, 10,
+                    11</text>
+                <text x="665" y="82" fill="#9CA3AF" font-family="monospace" font-size="10">- LED / RGB: I = (5V -
+                    V_LED)/R</text>
+                <text x="665" y="100" fill="#9CA3AF" font-family="monospace" font-size="10">- LCD 16x2 (Paralelo /
+                    I2C)</text>
+                <text x="665" y="120" fill="#10B981" font-family="monospace" font-size="10">- Servo.h (0-180°) |
+                    IRremote.h</text>
+            </svg>
+        </div>
+
+        <!-- MODULO 1: FLASHCARDS -->
+        <section id="module-flashcards" class="module-section active">
+            <p class="instructions">// PROTOCOLO ACTIVO: SELECCIONE LA TARJETA PARA DESPLEGAR LA ESPECIFICACION TECNICA
+                DE LA GUIA 5.1</p>
+            <div class="scene" id="flashcard-scene"></div>
+            <div class="controls" id="flashcard-controls">
+                <button class="btn-action btn-hard" id="btn-hard">[ REPASAR CONCEPTO ]</button>
+                <button class="btn-action btn-easy" id="btn-easy">[ CONCEPTO ASIMILADO ]</button>
+            </div>
+        </section>
+
+        <!-- MODULO 2: QUIZ -->
+        <section id="module-quiz" class="module-section">
+            <p class="instructions">// AUDITORIA DE CIRCUITO: SELECCIONE LA RESPUESTA EXACTA ANTES DEL TIMEOUT (15s)</p>
+            <div id="quiz-container">
+                <div class="quiz-header">
+                    <span id="quiz-progress">PREGUNTA 1 DE 6</span>
+                    <span>TIEMPO LIMITE: 15s</span>
+                </div>
+                <div class="timer-bar">
+                    <div class="timer-fill" id="quiz-timer"></div>
+                </div>
+                <div id="quiz-content"></div>
+            </div>
+        </section>
+
+        <!-- MODULO 3: DRAG & DROP -->
+        <section id="module-dragdrop" class="module-section">
+            <p class="instructions">// MAPEO DE HARDWARE: VINCULE CADA COMPONENTE, PIN O METODO CON SU FUNCION OPERATIVA
+            </p>
+            <div class="dd-container">
+                <div class="terms-col" id="dd-terms"></div>
+                <div class="defs-col" id="dd-defs"></div>
+            </div>
+        </section>
+
+        <!-- MODULO 4: COMPLETAR TEXTOS -->
+        <section id="module-fill" class="module-section">
+            <p class="instructions">// SINTAXIS C++ Y REGISTROS: COMPLETE LOS PARAMETROS EXACTOS (SIN TILDES NI
+                MAYUSCULAS OBLIGATORIAS)</p>
+            <div class="fill-container">
+                <div id="fill-content"></div>
+                <button class="check-btn" id="btn-check-fill">[ COMPILAR Y VALIDAR PARAMETROS ]</button>
+            </div>
+        </section>
+
+        <!-- MODULO 5: CLASIFICADOR -->
+        <section id="module-sorter" class="module-section">
+            <p class="instructions">// LOGICA DIGITAL DE ENTRADA: CLASIFIQUE EL COMPORTAMIENTO ENTRE CONFIGURACION
+                PULL-UP Y PULL-DOWN</p>
+            <div class="sorter-container">
+                <div class="item-pool" id="sorter-pool"></div>
+                <div class="sorter-bins">
+                    <div class="bin bin-pullup" data-bin="pullup">
+                        <h3 style="color: var(--accent-interactive);">CONFIGURACION PULL-UP</h3>
+                        <p class="bin-sub">Resistencia hacia 5V (externa o INPUT_PULLUP) y pulsador a GND</p>
+                        <div class="bin-items" id="bin-pullup"></div>
+                    </div>
+                    <div class="bin bin-pulldown" data-bin="pulldown">
+                        <h3 style="color: var(--accent-warning);">CONFIGURACION PULL-DOWN</h3>
+                        <p class="bin-sub">Resistencia hacia GND y pulsador conectado hacia 5V</p>
+                        <div class="bin-items" id="bin-pulldown"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        /**
+         * ========================================================================
+         * MOTOR DE DATOS: GUIA 5.1 (ROBOTICA Y ARDUINO)
+         * ========================================================================
+         */
+        const StudyData = {
+            flashcards: [
+                {
+                    id: 1,
+                    tag: "ADC vs PWM",
+                    front: "¿Qué diferencia técnica existe entre analogRead() y analogWrite() en Arduino Uno?",
+                    back: "analogRead(A0-A5) mide voltaje continuo con un ADC de 10 bits devolviendo un entero entre 0 y 1023. analogWrite(pin, 0-255) no genera voltaje analógico continuo, sino una señal PWM de 8 bits que modifica el ciclo de trabajo en los pines 3, 5, 6, 9, 10 y 11.",
+                    cite: "Guía 5.1 - Pág. 1 y 2 (Pines y PWM)"
+                },
+                {
+                    id: 2,
+                    tag: "LEY DE OHM",
+                    front: "¿Cómo se calcula la corriente real en un circuito con LED y qué significa el código Marrón-Negro-Rojo-Dorado?",
+                    back: "Por Ley de Ohm (I = V/R), en un circuito real debe descontarse la caída de tensión del diodo: I = (5V - V_LED) / R. En una resistencia de 4 bandas, Marrón (1), Negro (0), Rojo (x100) y Dorado (±5%) equivale a 1000 ohmios (1 kOhm) ±5%.",
+                    cite: "Guía 5.1 - Pág. 1 y 2 (Ley de Ohm y Resistencias)"
+                },
+                {
+                    id: 3,
+                    tag: "SENSORES ANALOGICOS",
+                    front: "¿Cómo se convierte la lectura analógica real de un sensor TMP36 a grados Celsius y qué inconsistencia advierte la guía?",
+                    back: "Con referencia de 5V: voltaje = lectura * (5.0 / 1023.0) y luego °C = (voltaje - 0.5) * 100. La guía advierte que usar map() con factor 3.04 no responde a la curva eléctrica real del TMP36, y que el sensor es analógico (A0), no I2C.",
+                    cite: "Guía 5.1 - Pág. 4 (Sensor de Temperatura TMP36)"
+                },
+                {
+                    id: 4,
+                    tag: "REGISTROS AVR",
+                    front: "¿Qué pines controla cada puerto (B, C, D) en el ATmega328P y qué función cumplen DDRx, PORTx y PINx?",
+                    back: "Puerto B controla D8-D13; Puerto C controla A0-A5; Puerto D controla D0-D7. El registro DDRx define la dirección de cada bit (1 = salida, 0 = entrada), PORTx escribe niveles lógicos en salidas (o activa pull-ups), y PINx lee estados físicos.",
+                    cite: "Guía 5.1 - Pág. 6 (Puertos B, C y D: Registros)"
+                },
+                {
+                    id: 5,
+                    tag: "PERIFERICOS",
+                    front: "¿Cómo logra un teclado matricial 4x4 leer 16 teclas utilizando únicamente 8 pines del microcontrolador?",
+                    back: "Organiza los interruptores en una matriz de 4 filas por 4 columnas. Arduino realiza un barrido secuencial activando una fila por vez y leyendo en qué columna cambió el nivel lógico (usando resistencias pull-up) para determinar la coordenada exacta.",
+                    cite: "Guía 5.1 - Pág. 6 (Teclado Matricial 4x4)"
+                },
+                {
+                    id: 6,
+                    tag: "ACTUADORES E IR",
+                    front: "¿Qué diferencia a un servomotor posicional de uno continuo y por qué es obligatorio invocar IrReceiver.resume()?",
+                    back: "El servo posicional recibe una consigna angular (0° a 180°) mediante Servo.h, mientras el continuo recibe velocidad y sentido. En recepción infrarroja (IRremote.h), IrReceiver.resume() reinicia el buffer tras decodificar un código HEX para habilitar la siguiente lectura.",
+                    cite: "Guía 5.1 - Pág. 5 y 7 (Sensor IR y Servomotores)"
+                }
+            ],
+            quiz: [
+                {
+                    q: "Se desea escalar la lectura de un potenciómetro en A0 para controlar el brillo de un LED por PWM en el pin 9. ¿Qué instrucción es la correcta?",
+                    options: [
+                        "int brillo = map(analogRead(A0), 0, 255, 0, 1023);",
+                        "int brillo = map(analogRead(A0), 0, 1023, 0, 255);",
+                        "int brillo = analogWrite(A0, 1023);",
+                        "int brillo = map(digitalRead(A0), 0, 5, 0, 255);"
+                    ],
+                    ans: 1
+                },
+                {
+                    q: "En un LED RGB de ánodo común (+5V en el terminal común), ¿qué ocurre con los valores PWM respecto a uno de cátodo común?",
+                    options: [
+                        "Se utiliza una única resistencia en el pin común y ninguna en R, G y B.",
+                        "No requieren pines PWM, solo pines analógicos A0-A2.",
+                        "Deben invertirse los valores PWM (255 apaga el canal y 0 lo enciende al máximo) y cada color necesita su propia resistencia.",
+                        "Funciona exactamente con la misma lógica que el de cátodo común."
+                    ],
+                    ans: 2
+                },
+                {
+                    q: "Al ejecutar la instrucción 'DDRD = 0b11110000;' en un Arduino Uno, ¿cómo quedan configurados los pines digitales del Puerto D?",
+                    options: [
+                        "Los pines D7 a D4 se configuran como salidas (OUTPUT) y los pines D3 a D0 como entradas (INPUT).",
+                        "Los pines D7 a D4 se ponen en estado HIGH y D3 a D0 en LOW, pero todos siguen siendo entradas.",
+                        "Los pines A5 a A2 se configuran como salidas analógicas.",
+                        "Los pines D13 a D10 se configuran como entradas con pull-up."
+                    ],
+                    ans: 0
+                },
+                {
+                    q: "¿Por qué al montar un pulsador de 4 patas en la protoboard se recomienda ubicarlo cruzando el canal central?",
+                    options: [
+                        "Para aumentar la sensibilidad y evitar la necesidad de usar resistencias.",
+                        "Porque las dos patas de cada lado ya están unidas internamente; cruzar el canal evita crear un puente permanente en las pistas.",
+                        "Para conectar automáticamente el pulsador al bus de tierra (GND).",
+                        "Porque el canal central actúa como un condensador antirrebote."
+                    ],
+                    ans: 1
+                },
+                {
+                    q: "En el Monitor Serial, si el usuario envía el carácter '1' desde el teclado de la PC y el código evalúa switch(tecla), ¿cómo debe compararse el caso?",
+                    options: [
+                        "case 1: (como número entero sin comillas).",
+                        "case \"1\": (como cadena de texto con comillas dobles).",
+                        "case '1': (como carácter ASCII entre comillas simples, ya que Serial.read() lee un carácter).",
+                        "case HIGH: (porque el número 1 equivale a nivel lógico alto)."
+                    ],
+                    ans: 2
+                },
+                {
+                    q: "Si una resistencia de 4 bandas presenta los colores Marrón - Negro - Rojo - Dorado, ¿cuál es su valor óhmico y tolerancia?",
+                    options: [
+                        "220 Ohmios ±10%",
+                        "100 Ohmios ±1%",
+                        "1000 Ohmios (1 kOhm) ±5%",
+                        "10 kOhmios ±5%"
+                    ],
+                    ans: 2
+                }
+            ],
+            dragDrop: [
+                { id: "dd1", term: "Pines 3, 5, 6, 9, 10, 11", desc: "Pines digitales de Arduino Uno habilitados para generar modulación por ancho de pulso (PWM) con analogWrite()." },
+                { id: "dd2", term: "Pin VO (LCD 16x2)", desc: "Terminal de la pantalla alfanumérica destinado a regular el contraste de los caracteres." },
+                { id: "dd3", term: "IrReceiver.resume()", desc: "Método de la librería IRremote que limpia el estado y habilita la recepción del próximo código infrarrojo." },
+                { id: "dd4", term: "Registro PORTC", desc: "Escribe niveles lógicos en los pines A0 a A5 (bits 0 al 5); los bits 7 y 6 no corresponden a salidas A0-A5 del Uno." },
+                { id: "dd5", term: "Display 7 Segmentos", desc: "Conjunto de LEDs nomenclados de 'a' a 'g' más punto decimal (DP); requiere una resistencia limitadora por segmento." }
+            ],
+            fillBlanks: [
+                { text: "1. En la configuración por registros del ATmega328P, el registro [ddrd] define la dirección de los pines D0 a D7, donde un bit en 1 significa [salida] y un 0 significa entrada." },
+                { text: "2. Para iniciar la comunicación con la computadora a la velocidad estándar se invoca Serial.[begin](9600) dentro de setup(), y para verificar si llegaron bytes al buffer se consulta Serial.[available]()." },
+                { text: "3. En un sensor analógico TMP36 conectado a 5V, tras calcular los voltios = analogRead(A0) * (5.0 / [1023].0), la temperatura en grados Celsius se obtiene mediante (voltios - 0.5) * [100]." },
+                { text: "4. En una pantalla LCD 16x2, el pin [rs] selecciona el registro (comando o dato), el pin [rw] define lectura/escritura y el pin E actúa como habilitación (Enable)." }
+            ],
+            sorter: [
+                { id: "s1", text: "Cuando el pulsador está sin presionar (circuito abierto), digitalRead() devuelve HIGH.", type: "pullup" },
+                { id: "s2", text: "Al presionar el botón (cerrar circuito hacia GND), la lectura en el pin pasa a estado LOW.", type: "pullup" },
+                { id: "s3", text: "Se puede activar internamente por software mediante pinMode(pin, INPUT_PULLUP) sin usar resistencia externa.", type: "pullup" },
+                { id: "s4", text: "Invierte la lógica habitual: la condición de activación en el código se evalúa como if(digitalRead(boton) == LOW).", type: "pullup" },
+                { id: "s5", text: "Cuando el pulsador está sin presionar (abierto), la resistencia fija el pin a tierra y digitalRead() lee LOW.", type: "pulldown" },
+                { id: "s6", text: "Al presionar el botón (cerrar circuito hacia +5V), el nivel lógico del pin sube a estado HIGH.", type: "pulldown" },
+                { id: "s7", text: "Mantiene lógica directa intuitiva (no presionado = LOW, presionado = HIGH), pero exige resistencia externa a GND en Arduino Uno.", type: "pulldown" },
+                { id: "s8", text: "El terminal del pulsador opuesto al pin digital y a la resistencia de tierra se conecta a la línea de 5V.", type: "pulldown" }
+            ]
+        };
+
+        /**
+         * ========================================================================
+         * SISTEMA DE PARTICULAS DE VALIDACION (NEUTRAL - SIN EMOJIS)
+         * ========================================================================
+         */
+        function fireConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            const colors = ['#00979D', '#10B981', '#F59E0B', '#F3F4F6'];
+
+            for (let i = 0; i < 120; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2 + 60,
+                    r: Math.random() * 5 + 2,
+                    dx: Math.random() * 10 - 5,
+                    dy: Math.random() * -10 - 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    tilt: Math.random() * 10
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let activeParticles = 0;
+                particles.forEach(p => {
+                    p.dy += 0.22;
+                    p.x += p.dx;
+                    p.y += p.dy;
+                    p.tilt += 0.1;
+
+                    if (p.y < canvas.height) activeParticles++;
+
+                    ctx.beginPath();
+                    ctx.lineWidth = p.r;
+                    ctx.strokeStyle = p.color;
+                    ctx.moveTo(p.x + p.tilt, p.y);
+                    ctx.lineTo(p.x + p.tilt, p.y + p.tilt);
+                    ctx.stroke();
+                });
+
+                if (activeParticles > 0) requestAnimationFrame(draw);
+                else ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            draw();
+        }
+
+        /**
+         * ========================================================================
+         * ROUTER SPA
+         * ========================================================================
+         */
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const targetBtn = e.target.closest('.nav-btn');
+                if (!targetBtn) return;
+
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.module-section').forEach(s => s.classList.remove('active'));
+
+                targetBtn.classList.add('active');
+                const targetId = targetBtn.getAttribute('data-target');
+                const section = document.getElementById(targetId);
+                if (section) section.classList.add('active');
+
+                if (targetId === 'module-quiz') {
+                    if (quizApp.currentIndex < quizApp.questions.length && !quizApp.isFinished) quizApp.startTimer();
+                } else {
+                    quizApp.pauseTimer();
+                }
+            });
+        });
+
+        /**
+         * ========================================================================
+         * MODULO 1: FLASHCARDS
+         * ========================================================================
+         */
+        class FlashcardManager {
+            constructor(data) {
+                this.originalData = data;
+                this.deck = [...data];
+                this.scene = document.getElementById('flashcard-scene');
+                this.controls = document.getElementById('flashcard-controls');
+                this.init();
+            }
+            init() {
+                document.getElementById('btn-easy').onclick = () => this.handleAnswer(true);
+                document.getElementById('btn-hard').onclick = () => this.handleAnswer(false);
+                this.renderCard();
+            }
+            reset() {
+                this.deck = [...this.originalData];
+                this.controls.style.display = 'flex';
+                this.renderCard();
+            }
+            renderCard() {
+                this.scene.innerHTML = '';
+                this.controls.classList.remove('show');
+
+                if (this.deck.length === 0) {
+                    this.scene.innerHTML = `
+                        <div style="text-align:center; padding: 3rem;">
+                            <h2 class="completion-msg">[ MODULO DE TARJETAS COMPLETADO ]</h2>
+                            <p style="color:var(--text-muted); margin: 1rem 0 2rem 0;">Todos los conceptos de hardware y programación de la Guía 5.1 fueron validados.</p>
+                            <button class="nav-btn" onclick="flashcardApp.reset()">[ REINICIAR MAZO ]</button>
+                        </div>`;
+                    this.controls.style.display = 'none';
+                    fireConfetti();
+                    return;
+                }
+                const current = this.deck[0];
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-face card-front">
+                        <span class="card-tag">${current.tag} // RESTANTES: ${this.deck.length}</span>
+                        <h2>${current.front}</h2>
+                        <span class="card-hint">[ CLIC PARA INVERTIR TARJETA ]</span>
+                    </div>
+                    <div class="card-face card-back">
+                        <span class="card-tag">ESPECIFICACION TECNICA</span>
+                        <p>${current.back}</p>
+                        <span class="citation">Ref: ${current.cite}</span>
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    card.classList.toggle('is-flipped');
+                    if (card.classList.contains('is-flipped')) {
+                        this.controls.classList.add('show');
+                    } else {
+                        this.controls.classList.remove('show');
+                    }
+                };
+
+                this.scene.appendChild(card);
+            }
+            handleAnswer(isEasy) {
+                const card = this.deck.shift();
+                if (!isEasy) this.deck.push(card);
+                const cardDOM = document.querySelector('.card');
+                cardDOM.style.transform = isEasy ? 'translateX(130%) rotateY(180deg)' : 'translateX(-130%) rotateY(180deg)';
+                cardDOM.style.opacity = '0';
+                setTimeout(() => this.renderCard(), 280);
+            }
+        }
+
+        /**
+         * ========================================================================
+         * MODULO 2: QUIZ
+         * ========================================================================
+         */
+        class QuizManager {
+            constructor(data) {
+                this.questions = [...data];
+                this.currentIndex = 0; this.score = 0; this.timeLeft = 15; this.isFinished = false;
+                this.container = document.getElementById('quiz-content');
+                this.timerBar = document.getElementById('quiz-timer');
+                this.progressText = document.getElementById('quiz-progress');
+            }
+            start() {
+                this.currentIndex = 0; this.score = 0; this.isFinished = false;
+                this.questions.sort(() => Math.random() - 0.5);
+                this.renderQuestion();
+            }
+            renderQuestion() {
+                if (this.currentIndex >= this.questions.length) return this.endQuiz();
+                this.pauseTimer(); this.timeLeft = 15; this.updateTimerBar();
+                this.progressText.textContent = `PREGUNTA ${this.currentIndex + 1} DE ${this.questions.length}`;
+
+                const q = this.questions[this.currentIndex];
+                let html = `<div class="question-text">${q.q}</div><div class="options-grid">`;
+                q.options.forEach((opt, index) => html += `<button class="option-btn" data-index="${index}">${opt}</button>`);
+                html += `</div>`;
+                this.container.innerHTML = html;
+
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.onclick = (e) => this.checkAnswer(parseInt(e.target.getAttribute('data-index')), e.target);
+                });
+                if (document.getElementById('module-quiz').classList.contains('active')) this.startTimer();
+            }
+            startTimer() {
+                clearInterval(this.timerInterval);
+                this.timerInterval = setInterval(() => {
+                    this.timeLeft--; this.updateTimerBar();
+                    if (this.timeLeft <= 0) { this.pauseTimer(); this.checkAnswer(-1, null); }
+                }, 1000);
+            }
+            pauseTimer() { clearInterval(this.timerInterval); }
+            updateTimerBar() {
+                const percentage = (this.timeLeft / 15) * 100;
+                this.timerBar.style.width = `${percentage}%`;
+                this.timerBar.className = percentage < 30 ? 'timer-fill danger' : 'timer-fill';
+            }
+            checkAnswer(selectedIndex, btnElement) {
+                this.pauseTimer();
+                const q = this.questions[this.currentIndex];
+                const buttons = document.querySelectorAll('.option-btn');
+                buttons.forEach(b => b.style.pointerEvents = 'none');
+
+                if (selectedIndex === q.ans) {
+                    if (btnElement) btnElement.classList.add('correct');
+                    this.score++;
+                } else {
+                    if (btnElement) btnElement.classList.add('wrong');
+                    buttons[q.ans].classList.add('correct');
+                }
+                setTimeout(() => { this.currentIndex++; this.renderQuestion(); }, 1700);
+            }
+            endQuiz() {
+                this.isFinished = true;
+                this.progressText.textContent = `AUDITORIA FINALIZADA`;
+                this.container.innerHTML = `
+                    <h2 class="completion-msg">[ REPORTE DE AUDITORIA ]</h2>
+                    <p style="text-align:center; font-size: 1.3rem; margin-top:1rem; font-family:var(--font-tech);">
+                        PRECISION OBTENIDA: ${this.score} / ${this.questions.length}
+                    </p>
+                    <div style="text-align:center; margin-top:2rem;">
+                        <button class="nav-btn" onclick="quizApp.start()">[ REINICIAR EVALUACION ]</button>
+                    </div>`;
+                this.timerBar.style.width = '0%';
+                if (this.score === this.questions.length) fireConfetti();
+            }
+        }
+
+        /**
+         * ========================================================================
+         * MODULO 3: DRAG & DROP
+         * ========================================================================
+         */
+                class DragDropManager {
+            constructor(data) {
+                this.data = data;
+                this.termsCol = document.getElementById('dd-terms');
+                this.defsCol = document.getElementById('dd-defs');
+                this.matches = 0;
+                this.selectedTermEl = null;
+            }
+            init() {
+                this.termsCol.innerHTML = '';
+                this.defsCol.innerHTML = '';
+                this.matches = 0;
+                this.selectedTermEl = null;
+
+                const terms = [...this.data].sort(() => Math.random() - 0.5);
+                const defs = [...this.data].sort(() => Math.random() - 0.5);
+
+                terms.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'draggable-term';
+                    el.draggable = true;
+                    el.textContent = item.term;
+                    el.dataset.id = item.id;
+
+                    // Drag nativo
+                    el.ondragstart = (e) => {
+                        e.dataTransfer.setData('text/plain', item.id);
+                        setTimeout(() => el.style.opacity = '0.4', 0);
+                    };
+                    el.ondragend = () => el.style.opacity = '1';
+
+                    // Seleccion tactil / click
+                    el.onclick = () => {
+                        if (el.classList.contains('selected')) {
+                            el.classList.remove('selected');
+                            this.selectedTermEl = null;
+                        } else {
+                            document.querySelectorAll('.draggable-term').forEach(t => t.classList.remove('selected'));
+                            el.classList.add('selected');
+                            this.selectedTermEl = el;
+                        }
+                    };
+
+                    this.termsCol.appendChild(el);
+                });
+
+                defs.forEach(item => {
+                    const zone = document.createElement('div');
+                    zone.className = 'drop-zone';
+                    zone.dataset.matchId = item.id;
+                    zone.innerHTML = `<p style="pointer-events:none; font-size:clamp(0.85rem, 2vw, 0.92rem); text-align:center;">${item.desc}</p>`;
+
+                    // Drag nativo
+                    zone.ondragover = e => { e.preventDefault(); if (!zone.classList.contains('matched')) zone.classList.add('drag-over'); };
+                    zone.ondragleave = () => zone.classList.remove('drag-over');
+                    zone.ondrop = e => {
+                        e.preventDefault();
+                        zone.classList.remove('drag-over');
+                        const draggedId = e.dataTransfer.getData('text/plain');
+                        this.executeMatch(draggedId, zone);
+                    };
+
+                    // Click / toque en zona
+                    zone.onclick = () => {
+                        if (!this.selectedTermEl || zone.classList.contains('matched')) return;
+                        const termId = this.selectedTermEl.dataset.id;
+                        this.executeMatch(termId, zone);
+                    };
+
+                    this.defsCol.appendChild(zone);
+                });
+            }
+
+            executeMatch(termId, zone) {
+                if (zone.classList.contains('matched')) return;
+                const termEl = document.querySelector(`.draggable-term[data-id="${termId}"]`);
+                if (!termEl) return;
+
+                if (termId === zone.dataset.matchId) {
+                    const descText = zone.querySelector('p') ? zone.querySelector('p').textContent : '';
+                    termEl.classList.remove('selected');
+                    zone.innerHTML = `<div style="text-align:center;"><strong style="color:var(--accent-success); font-family:var(--font-tech); display:block; margin-bottom:0.3rem;">[ ${termEl.textContent} ]</strong><span style="font-size:0.85rem; color:var(--text-muted);">${descText}</span></div>`;
+                    termEl.remove();
+                    zone.classList.add('matched');
+                    this.selectedTermEl = null;
+                    this.matches++;
+                    if (this.matches === this.data.length) {
+                        this.termsCol.innerHTML = `<div style="text-align:center; padding:2rem 0;"><p class="completion-msg" style="font-size:1.1rem;">[ MAPEO DE HARDWARE COMPLETO ]</p><button class="nav-btn" style="margin-top:1rem;" onclick="ddApp.init()">[ REINICIAR ]</button></div>`;
+                        fireConfetti();
+                    }
+                } else {
+                    const origBorder = zone.style.borderColor;
+                    zone.style.borderColor = 'var(--accent-alert)';
+                    termEl.style.borderColor = 'var(--accent-alert)';
+                    setTimeout(() => {
+                        zone.style.borderColor = origBorder;
+                        termEl.style.borderColor = 'var(--accent-interactive)';
+                    }, 500);
+                }
+            }
+        }
+
+        
+
+        /**
+         * ========================================================================
+         * MODULO 4: COMPLETAR TEXTOS
+         * ========================================================================
+         */
+        class FillBlanksManager {
+            constructor(data) {
+                this.data = data;
+                this.container = document.getElementById('fill-content');
+                this.btnCheck = document.getElementById('btn-check-fill');
+                this.init();
+            }
+            init() {
+                this.container.innerHTML = '';
+                this.data.forEach((item) => {
+                    let htmlText = item.text.replace(/\[(.*?)\]/g, (match, p1) => {
+                        const cleanAnswer = p1.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+                        return `<input type="text" class="blank-input" data-answer="${cleanAnswer}" autocomplete="off" placeholder="...">`;
+                    });
+                    this.container.innerHTML += `<p style="margin-bottom: 1.4rem;">${htmlText}</p>`;
+                });
+
+                this.btnCheck.onclick = () => this.checkAnswers();
+            }
+            checkAnswers() {
+                const inputs = this.container.querySelectorAll('.blank-input');
+                let allCorrect = true;
+
+                inputs.forEach(input => {
+                    const answer = input.getAttribute('data-answer');
+                    const userVal = input.value.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+                    if (userVal === answer) {
+                        input.classList.remove('wrong');
+                        input.classList.add('correct');
+                    } else {
+                        input.classList.remove('correct');
+                        input.classList.add('wrong');
+                        allCorrect = false;
+                        void input.offsetWidth;
+                    }
+                });
+
+                if (allCorrect) {
+                    this.btnCheck.textContent = "[ SINTAXIS Y PARAMETROS VERIFICADOS CORRECTAMENTE ]";
+                    this.btnCheck.style.backgroundColor = "var(--accent-success)";
+                    this.btnCheck.style.color = "#090D16";
+                    fireConfetti();
+                }
+            }
+        }
+
+        /**
+         * ========================================================================
+         * MODULO 5: CLASIFICADOR (PULL-UP VS PULL-DOWN)
+         * ========================================================================
+         */
+                class BinarySorterManager {
+            constructor(data) {
+                this.data = [...data].sort(() => Math.random() - 0.5);
+                this.pool = document.getElementById('sorter-pool');
+                this.selectedItemEl = null;
+                this.init();
+            }
+            init() {
+                this.pool.innerHTML = '';
+                document.getElementById('bin-pullup').innerHTML = '';
+                document.getElementById('bin-pulldown').innerHTML = '';
+                this.selectedItemEl = null;
+
+                this.data.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'sorter-item';
+                    el.draggable = true;
+                    el.textContent = item.text;
+                    el.dataset.type = item.type;
+                    el.id = item.id;
+
+                    // Drag nativo
+                    el.ondragstart = (e) => {
+                        e.dataTransfer.setData('text/plain', item.type);
+                        e.dataTransfer.setData('text/id', item.id);
+                        setTimeout(() => el.style.opacity = '0.4', 0);
+                    };
+                    el.ondragend = () => el.style.opacity = '1';
+
+                    // Seleccion tactil / click
+                    el.onclick = () => {
+                        if (el.classList.contains('selected')) {
+                            el.classList.remove('selected');
+                            this.selectedItemEl = null;
+                        } else {
+                            document.querySelectorAll('.sorter-item').forEach(i => i.classList.remove('selected'));
+                            el.classList.add('selected');
+                            this.selectedItemEl = el;
+                        }
+                    };
+
+                    this.pool.appendChild(el);
+                });
+
+                document.querySelectorAll('.bin').forEach(bin => {
+                    // Drag nativo
+                    bin.ondragover = e => { e.preventDefault(); bin.style.backgroundColor = 'rgba(255,255,255,0.03)'; };
+                    bin.ondragleave = () => bin.style.backgroundColor = 'var(--bg-secondary)';
+                    bin.ondrop = e => {
+                        e.preventDefault();
+                        bin.style.backgroundColor = 'var(--bg-secondary)';
+                        const draggedType = e.dataTransfer.getData('text/plain');
+                        const draggedId = e.dataTransfer.getData('text/id');
+                        this.executeSort(draggedId, draggedType, bin);
+                    };
+
+                    // Toque / click en contenedor
+                    bin.onclick = (e) => {
+                        if (!this.selectedItemEl) return;
+                        if (e.target.closest('.bin-items') && e.target !== bin.querySelector('.bin-items')) return;
+                        const itemId = this.selectedItemEl.id;
+                        const itemType = this.selectedItemEl.dataset.type;
+                        this.executeSort(itemId, itemType, bin);
+                    };
+                });
+            }
+
+            executeSort(itemId, itemType, bin) {
+                const expectedType = bin.getAttribute('data-bin');
+                const el = document.getElementById(itemId);
+                if (!el) return;
+
+                if (itemType === expectedType) {
+                    el.classList.remove('selected');
+                    el.style.margin = '0';
+                    el.style.backgroundColor = 'var(--bg-primary)';
+                    el.style.borderLeft = `3px solid ${expectedType === 'pullup' ? 'var(--accent-interactive)' : 'var(--accent-warning)'}`;
+                    el.draggable = false;
+                    el.onclick = null;
+
+                    bin.querySelector('.bin-items').appendChild(el);
+                    this.selectedItemEl = null;
+
+                    if (this.pool.children.length === 0) {
+                        this.pool.innerHTML = `<div style="text-align:center;"><span class="completion-msg" style="font-size:1.1rem; display:block; margin-bottom:0.6rem;">[ CLASIFICACION ELECTRICA COMPLETADA ]</span><button class="nav-btn" onclick="sorterApp.init()">[ REINICIAR CLASIFICADOR ]</button></div>`;
+                        fireConfetti();
+                    }
+                } else {
+                    el.style.backgroundColor = 'var(--accent-alert)';
+                    setTimeout(() => el.style.backgroundColor = 'var(--bg-tertiary)', 450);
+                }
+            }
+        }
+
+        
+
+        // =========================================
+        // INICIALIZACION DE MODULOS
+        // =========================================
+        const flashcardApp = new FlashcardManager(StudyData.flashcards);
+        const quizApp = new QuizManager(StudyData.quiz);
+        const ddApp = new DragDropManager(StudyData.dragDrop);
+        const fillApp = new FillBlanksManager(StudyData.fillBlanks);
+        const sorterApp = new BinarySorterManager(StudyData.sorter);
+
+        quizApp.start();
+        ddApp.init();
+    </script>
+</body>
+
+</html>
